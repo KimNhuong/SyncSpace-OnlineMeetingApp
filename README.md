@@ -32,7 +32,7 @@
 - **Message**: Lưu tin nhắn trong phòng họp  
 - **WhiteboardAction** *(optional)*: Lưu các thao tác vẽ realtime
 
-> Xem chi tiết sơ đồ ERD trong thư mục `/docs`
+> Xem chi tiết sơ đồ ERD trong thư mục `/backend/documents`
 
 ---
 
@@ -45,4 +45,8 @@
 - ✅ Bật/tắt micro, camera
 - ✅ Kết thúc cuộc họp, thống kê thời gian
 
-
+## Cách cài đặt và triển khai hệ thống: 
+- Clone project: git clone https://github.com/KimNhuong/SyncSpace-OnlineMeetingApp
+- Bash: cd backend
+        npm install
+*notes: tự tạo file .env và tự cấu hình môi trường 
