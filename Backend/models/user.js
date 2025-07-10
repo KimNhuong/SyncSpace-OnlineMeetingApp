@@ -1,4 +1,4 @@
-const {Sequelize, Model, DataTypes, DATE} = require('sequelize');
+const {DataTypes, DATE} = require('sequelize');
 const { now } = require('sequelize/lib/utils');
 const sequelize = require('../models/connectDB');
 
@@ -6,6 +6,7 @@ const User = sequelize.define('user',{
     userID:{
         type: DataTypes.INTEGER,
         autoIncrement: true, 
+        primaryKey: true,
     },
     name: 
     {   
@@ -23,18 +24,18 @@ const User = sequelize.define('user',{
     },
     email: 
     {
-        types: DataTypes.STRING,
+        type: DataTypes.STRING,
     },
     avatarUrl:
     {
-        types: DataTypes.STRING, 
+        type: DataTypes.STRING, 
     },
     createdAt:{
-        types: DataTypes.DATE,
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
     updatedAt:{
-        types: DataTypes.DATE,
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     }
 },

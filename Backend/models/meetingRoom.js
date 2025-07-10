@@ -1,4 +1,4 @@
-const {Sequelize, DataTypes, Model, ENUM} = require('sequelize');
+const { DataTypes, ENUM} = require('sequelize');
 const sequelize = require('../models/connectDB');
 let randomstring = require('randomstring');
 const User = require('./user');
@@ -7,19 +7,20 @@ const meetingRoom = sequelize.define(
     'meetingRoom',{   
     roomID: 
     {
-        types: DataTypes.INTEGER,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
+        primaryKey: true,
     },
     roomCode:{
-        types: DataTypes.STRING, 
+        type: DataTypes.STRING, 
         defaultValue: randomstring.generate(8),
     },
     capacity:{
-        types: DataTypes.INTEGER,
+        type: DataTypes.INTEGER,
         defaultValue: 8, 
     },
     creatorID:{
-        types: DataTypes.INTEGER,
+        type: DataTypes.INTEGER,
         references:
         {
             model: User,
@@ -27,15 +28,16 @@ const meetingRoom = sequelize.define(
         }
     },
     status:{
-        types: ENUM('Active','Ended'),
+        type: ENUM('Active','Ended'),
         allowNull: false, 
     },
     createdAt:{
-        types: DataTypes.DATE, 
+        type: DataTypes.DATE, 
         defaultValue: DataTypes.NOW,
     },
     endedAt:{
-        types: DataTypes.DATE,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
     }
 },
     {
