@@ -1,5 +1,7 @@
 const User = require('../models/user');
-const {hashPassword, existingUsername, getHashedPassword ,validatePassword} = require('../utils/user');
+const {hashPassword, existingUsername, getHashedPassword ,validatePassword, generateToken} = require('../utils/user');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const HandleSignup = async (req,res) =>{
     const {name , userName, passWord, email, avatarUrl} = req.body;
@@ -32,10 +34,16 @@ const Login = async (req,res) => {
     try{
         if (await existingUsername(loginUsername) == true){
             if (result){ 
+
+                const foundUser = await User.findOne({ where: {userName: loginUsername}  });
+                const token = generateToken(foundUser);
+
                 return res.status(201).json({
-                message: 'login succesfully'
+                message: 'login succesfully',
+                accessToken: token,
                     }
                 )
+
             };
         } else 
             return res.status(404).send( 'wrong username or password' ); 
@@ -48,7 +56,7 @@ const UserExist = async (req,res) => {
     const username = req.body;
     try{
     if (existingUsername(username)){
-        return res.status(200).json({
+        return res.status(201).json({
             message: 'User Exists',
         })
     } else return res.status(404).json({
