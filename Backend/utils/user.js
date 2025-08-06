@@ -20,12 +20,13 @@ async function getHashedPassword(username) {
         attributes: ['passWord'] 
     });
     if (!user) return null;
-    return user.password; 
+    return user.passWord; 
 }
 
 async function validatePassword (password,hash) {
     const result = await bcrypt.compare(password, hash);
     return result; 
 }
+
 
 module.exports = {hashPassword, existingUsername, validatePassword, getHashedPassword};
