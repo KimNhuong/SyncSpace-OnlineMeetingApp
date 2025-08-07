@@ -5,12 +5,12 @@ dotenv.config();
 async function verifyToken(req,res,next){
     const token = req.headers['authorization'];
     const fulltoken = token && token.split(' ')[1];
-    const decoded = await jwt.verify(fulltoken, process.env.JWT_SECRET);
+
+    if (!fulltoken) return res.status(401);
+
     try {
+        const decoded = await jwt.verify(fulltoken, process.env.JWT_SECRET);
         if (decoded!=null){
-            return res.status(201).json({
-                message: 'oke'
-            });
             req.user = decoded;
             next();
         } else return res.status(401).json({
