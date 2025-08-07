@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router();
 const {HandleSignup, Login, ForgotPassword, UserExist} = require('../controllers/UserController');
+const {verifyToken} = require('../middlewares/user');
 
 //signUP
 router.post('/signup',HandleSignup);

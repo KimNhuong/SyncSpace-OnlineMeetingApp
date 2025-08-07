@@ -44,4 +44,5 @@ function generateToken(user) {
         })
 }
 
+
 module.exports = {hashPassword, existingUsername, validatePassword, getHashedPassword, generateToken};
