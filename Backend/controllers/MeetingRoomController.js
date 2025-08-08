@@ -1,17 +1,12 @@
 const meetingRoom = require('../models/meetingRoom');
 
 const CreateRoom = async (req,res) => {
-    const user = req.body;
+    const user = req.user;
     try{
     const newRoom = await meetingRoom.create(
         {
-            roomID,
-            roomCode,
-            capacity,
-            creatorID: user.userID,
+            creatorID: req.user.userID,
             status: 'Active',
-            createdAt,
-            endedAt,
         }
         );
     return res.status(201).json(
@@ -21,10 +16,11 @@ const CreateRoom = async (req,res) => {
         }
     )    
     } catch (err) {
-        return res.status(404).json({
-            message: err,
+        return res.status(500).json({
+            message: err.message,
         })
     }
 }
+
 
 module.exports = {CreateRoom};
