@@ -5,7 +5,7 @@ const CreateRoom = async (req,res) => {
     try{
     const newRoom = await meetingRoom.create(
         {
-            creatorID: req.user.userID,
+            creatorID: user.userID,
             status: 'Active',
         }
         );
