@@ -7,9 +7,8 @@
 ## 🚀 Tech Stack
 
 ### 💻 Frontend:
-- ReactJS (with Vite)
+- ReactJS (CRA)
 - Tailwind CSS
-- Radix-UI
 
 ### 🛠 Backend:
 - Node.js + Express.js
@@ -50,3 +49,4 @@
 - Bash: cd backend
         npm install
 *notes: tự tạo file .env và tự cấu hình môi trường 
+
