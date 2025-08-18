@@ -2,7 +2,10 @@ import './App.css';
 import HomePage from './pages/homepage';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from './router/Layout';
-import AboutPage from './pages/AboutPage';
+import AboutPage from './pages/AboutPageModule/AboutPage';
+import WorkingExpPage from './pages/AboutPageModule/WorkingExpPage';
+import SkillandexpertisePage from './pages/AboutPageModule/SkillAndExpertisePage';
+import EducationPage from './pages/AboutPageModule/EducationBgPage';
 
 function App() {
   return (
@@ -11,6 +14,9 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="/about" element={<AboutPage />}></Route>
+          <Route path="/Educationbg" element={<EducationPage />}></Route>
+          <Route path="/Experiences" element={<WorkingExpPage />}></Route>
+          <Route path="/Skillandexpertise" element={<SkillandexpertisePage />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>
