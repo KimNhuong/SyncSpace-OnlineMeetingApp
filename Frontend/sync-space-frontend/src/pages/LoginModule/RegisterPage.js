@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LoginRequest } from "../../Services/ValidationService"
 
 function RegisterPage() {
 
@@ -12,11 +13,13 @@ function RegisterPage() {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   }
-  
+
   const handleSubmit = (event) => {
      event.preventDefault();
-     console.log(username,"\n",password)
+     console.log(username,"\n",password);
+     LoginRequest(username,password)
   }
+
 
   return (
     <div
@@ -34,9 +37,9 @@ function RegisterPage() {
         >
           <label className="font-spartan font-bold inline-block">
             <input
-              type="email"
+              type="text"
               className="border-2 rounded-[10px] border-black z-10 ml-2 p-1 w-[100%]"
-              placeholder="Email" onChange={handleUsernameChange}
+              placeholder="Username" onChange={handleUsernameChange}
             />
             <input
               type="password"

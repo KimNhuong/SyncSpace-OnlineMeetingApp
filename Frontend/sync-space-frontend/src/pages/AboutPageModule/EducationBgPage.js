@@ -3,7 +3,7 @@ import {Link} from "react-router-dom"
 function EducationPage() {
   return (
     <div className="bg-indigo-600 w-full h-full fixed grid grid-cols-3 grid-rows-3">
-      <div classNaame="w-full h-full grid grid-cols-2 row-span-2 col-span-2 relative">
+      <div>
         <img src="/retroCamera.png" alt="retroCAm" className="absolute grid rounded-lg w-full h-full ml-24 z-10 right-[30rem]"/>
         <img src="/Mypic2.jpg" alt="mypic2" className="w-[20rem] rounded-lg h-full ml-[20rem] mt-28 shadow-xl shadow-indigo-50 ring-2 rotate-6 object-cover"/>
         <Link to="/about" className="font-spartan font-bold text-white text-5xl absolute top-3/4 left-60 pr-24 border-r-4 z-30 hover:cursor-pointer  hover:underline  hover:drop-shadow-[0_0_10px_#38bdf8]">Education Background</Link>
