@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPageModule/AboutPage';
 import WorkingExpPage from './pages/AboutPageModule/WorkingExpPage';
 import SkillandexpertisePage from './pages/AboutPageModule/SkillAndExpertisePage';
 import EducationPage from './pages/AboutPageModule/EducationBgPage';
+import RegisterPage from './pages/LoginModule/RegisterPage';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
           <Route path="/Educationbg" element={<EducationPage />}></Route>
           <Route path="/Experiences" element={<WorkingExpPage />}></Route>
           <Route path="/Skillandexpertise" element={<SkillandexpertisePage />}></Route>
-        </Route>
+          <Route path="/NewRoom" element={<RegisterPage/>}></Route>
+        </Route> 
       </Routes>
     </BrowserRouter>
   );
