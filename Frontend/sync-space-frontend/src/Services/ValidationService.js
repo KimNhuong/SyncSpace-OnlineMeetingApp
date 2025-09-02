@@ -1,9 +1,17 @@
 import {default as axios} from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const loginAPI = process.env.REACT_APP_API_URL + 'user/login';
+const registerAPI = process.env.REACT_APP_API_URL + 'user/register'
 
 function RegisterRequest(){
-    
+    try {
+        const payload = {
+            
+        }
+    } catch (e) {
+
+    }
 }
 
 async function LoginRequest(username,password) {
@@ -14,10 +22,14 @@ async function LoginRequest(username,password) {
         };
 
         const response = await axios.post(loginAPI,payload);
-        console.log(response.data);
+        return response.data;
     } catch (e) {
         console.log(e);
     }
 }
 
-export { RegisterRequest , LoginRequest};
+function DecodeToken(token){
+    return jwtDecode(token);
+}
+
+export { RegisterRequest , LoginRequest, DecodeToken};
