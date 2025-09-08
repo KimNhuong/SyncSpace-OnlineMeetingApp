@@ -1,49 +1,54 @@
 import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
 
 function HomePage() {
   return (
-    <div className="h-full w-full relative">
-      <img
-        src="HomeBg.jpg"
-        alt="home background"
-        className="w-full h-full object-cover"
-      />
+    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-100 via-white to-indigo-300 flex flex-col">
+      {/* Header */}
+      <header className="flex flex-col items-center justify-center pt-16 pb-8">
+        <h1 className="font-spartan font-extrabold text-5xl md:text-7xl text-indigo-700 drop-shadow-lg tracking-wide mb-4">
+          SYNC-SPACE
+        </h1>
+        <p className="font-spartan text-xl md:text-2xl text-gray-700 bg-white/70 backdrop-blur-md rounded-full px-6 py-2 shadow">
+          Sync smarter. Work better.
+        </p>
+      </header>
 
-      <div className="absolute bg-white h-1/2 w-full border-t-2 top-[40%] shadow-slate-900 shadow-inner">
-        <div className="w-full flex flex-row font-spartan font-bold text-2xl text-gray-700 text-center p-8 gap-12 justify-center">
-          
-          {/* Card 1 */}
-          <div className="bg-slate-200/80 rounded-2xl shadow-lg shadow-black flex-1 max-w-xs flex flex-col items-center justify-center p-6 transition-transform hover:scale-105 hover:bg-slate-300 cursor-pointer">
-            <img
-              src="meetingIcon.svg"
-              alt="MeetingIcon"
-              className="w-20 h-20 mb-4"
-            />
-            <span>New Meeting</span>
+      {/* 3 chức năng chính */}
+      <section className="flex-1 flex items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl px-4">
+          {/* New Meeting */}
+          <Link
+            to="/NewMeeting"
+            className="group relative rounded-2xl shadow-xl bg-white/80 hover:bg-indigo-50 transition flex flex-col items-center justify-center py-12 px-6 cursor-pointer"
+          >
+            <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition shadow-lg">
+              <img src="meetingIcon.svg" alt="MeetingIcon" className="w-16 h-16 group-hover:blur-sm transition" />
+            </div>
+            <span className="font-bold text-indigo-700 text-xl mb-2 tracking-wide">New Meeting</span>
+            <span className="text-gray-500 text-base">Tạo phòng họp mới, bắt đầu cuộc trò chuyện ngay!</span>
+          </Link>
+          {/* Meeting History */}
+          <div className="group relative rounded-2xl shadow-xl bg-white/80 hover:bg-indigo-50 transition flex flex-col items-center justify-center py-12 px-6 cursor-pointer">
+            <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition shadow-lg">
+              <img src="History.svg" alt="HistoryIcon" className="w-16 h-16 group-hover:blur-sm transition" />
+            </div>
+            <span className="font-bold text-indigo-700 text-xl mb-2 tracking-wide">Meeting History</span>
+            <span className="text-gray-500 text-base">Xem lại lịch sử các cuộc họp đã tham gia.</span>
           </div>
-
-          {/* Card 2 */}
-          <div className="bg-slate-200/80 rounded-2xl shadow-lg shadow-black flex-1 max-w-xs flex flex-col items-center justify-center p-6 transition-transform hover:scale-105 hover:bg-slate-300 cursor-pointer">
-            <img
-              src="History.svg"
-              alt="HistoryIcon"
-              className="w-20 h-20 mb-4"
-            />
-            <span>Meeting History</span>
-          </div>
-
-          {/* Card 3 */}
-          <div className="bg-slate-200/80 rounded-2xl shadow-lg shadow-black flex-1 max-w-xs flex flex-col items-center justify-center p-6 transition-transform hover:scale-105 hover:bg-slate-300 cursor-pointer">
-            <img
-              src="Logout.svg"
-              alt="LogoutIcon"
-              className="w-20 h-20 mb-4 relative"
-            />
-            <span className>Sign Out</span>
+          {/* Sign Out */}
+          <div className="group relative rounded-2xl shadow-xl bg-white/80 hover:bg-indigo-50 transition flex flex-col items-center justify-center py-12 px-6 cursor-pointer">
+            <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition shadow-lg">
+              <img src="Logout.svg" alt="LogoutIcon" className="w-16 h-16 group-hover:blur-sm transition" />
+            </div>
+            <span className="font-bold text-indigo-700 text-xl mb-2 tracking-wide">Sign Out</span>
+            <span className="text-gray-500 text-base">Đăng xuất khỏi nền tảng Sync-Space.</span>
           </div>
         </div>
-        <Footer />
-      </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
