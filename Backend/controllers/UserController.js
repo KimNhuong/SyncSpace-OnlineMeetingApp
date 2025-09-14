@@ -18,9 +18,10 @@ const HandleSignup = async (req,res) =>{
             email,
             avatarUrl
         });
+        const NewToken = generateToken(newUser);
         return res.status(201).json({
             message: 'Signup succesfully',
-            user: newUser,
+            token: NewToken,
         })
     } catch (err){
         return res.status(404).send(err);

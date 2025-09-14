@@ -19,15 +19,17 @@ const io = new Server(server,  {
 });
 
 app.use(cors({
-  origin: "http://localhost:3000", // cho phép frontend React
+  origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  preflightContinue: false,   // tự động trả lời OPTIONS
+  optionsSuccessStatus: 200   // status cho OPTIONS
 }));
 
 
 app.use(express.json());
 app.use('/user',UserRouter);
-app.use('./meeting',MeetingRoomRouter);
+app.use('/meeting',MeetingRoomRouter);
 
 
 require('./models/index');
@@ -37,10 +39,17 @@ require('./models/index');
 
 io.on('connection',(socket) => {
     console.log('user connected');
+
+    socket.on('Room code',(data)=> {
+      console.log("The room code is: ",data.code)
+    })
+
+
     socket.on('disconnect', ()=> {
       console.log('user disconnected');
     })
 })
+
 
 server.listen(port,()=> {
   console.log(`Server socket is listening on ${port}`)

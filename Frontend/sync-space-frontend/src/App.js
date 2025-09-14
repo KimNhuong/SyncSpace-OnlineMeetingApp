@@ -8,13 +8,15 @@ import SkillandexpertisePage from './pages/AboutPageModule/SkillAndExpertisePage
 import EducationPage from './pages/AboutPageModule/EducationBgPage';
 import RegisterPage from './pages/LoginModule/RegisterPage';
 import NewRoomPage from './pages/MeetingModule/NewRoomPage';
+import MeetingPage from './pages/MeetingModule/MeetingPage';
+import SignUpPage from './pages/LoginModule/SignUpPage';
 
 
 function App() {
   return (
     <BrowserRouter className="App">
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout value="false" />}>
           <Route index element={<HomePage />} />
           <Route path="/about" element={<AboutPage />}></Route>
           <Route path="/Educationbg" element={<EducationPage />}></Route>
@@ -22,7 +24,9 @@ function App() {
           <Route path="/Skillandexpertise" element={<SkillandexpertisePage />}></Route>
           <Route path="/NewRoom" element={<RegisterPage/>}></Route>
           <Route path="/NewMeeting" element={<NewRoomPage/>}></Route>
-        </Route> 
+          <Route path="/Meeting" element={<MeetingPage />}></Route>
+          <Route path="/SignUp" element={<SignUpPage/>}></Route>
+         </Route>  
       </Routes>
     </BrowserRouter>
   );

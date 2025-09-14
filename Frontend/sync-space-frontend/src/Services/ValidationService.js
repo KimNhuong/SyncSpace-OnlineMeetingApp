@@ -2,15 +2,22 @@ import {default as axios} from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
 const loginAPI = process.env.REACT_APP_API_URL + 'user/login';
-const registerAPI = process.env.REACT_APP_API_URL + 'user/register'
+const registerAPI = process.env.REACT_APP_API_URL + 'user/signup'
 
-function RegisterRequest(){
+async function RegisterRequest(Name , UserName, PassWord, Email, AvatarUrl){
     try {
         const payload = {
-            
+            name: Name ,
+            userName: UserName, 
+            passWord: PassWord, 
+            email: Email, 
+            avatarUrl: AvatarUrl
         }
+        const response = await axios.post(registerAPI, payload);
+        return response.data;
     } catch (e) {
-
+        console.log(e); 
+        throw e;
     }
 }
 

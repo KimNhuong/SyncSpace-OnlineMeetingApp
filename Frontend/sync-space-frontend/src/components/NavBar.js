@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
 
 export default function Navbar() {
-  const [isLoggedIn, setLoggedIn] = useState(
-    () => !!localStorage.getItem("token")
-  );
+  const {isLoggedIn, logout} = useContext(AuthContext);
   const [hover, setHover] = useState(0);
   const navigate = useNavigate();
 
+
   function Logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setLoggedIn(false);
-    window.location.reload();
+    logout();
   }
 
   return (
@@ -30,7 +29,7 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link
-                  to="/rooms"
+                  to="/NewMeeting"
                   className="text-gray-700 hover:text-indigo-600"
                 >
                   Rooms
@@ -73,7 +72,7 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link
-                  to="/rooms"
+                  to="/NewMeeting"
                   className="text-gray-700 hover:text-indigo-600"
                 >
                   Rooms
@@ -87,7 +86,6 @@ export default function Navbar() {
               </nav>
             </div>
             <div className="relative flex items-center font-spartan font-bold">
-              {/* Icon luôn giữ vị trí */}
               <img
                 src="/3-lines.svg"
                 alt="3 lines"
@@ -97,7 +95,7 @@ export default function Navbar() {
               {/* Dropdown */}
               {hover === 1 && (
                 <div
-                  className="absolute top-10 right-0 w-fit h-fit p-3 z-10 rounded-xl bg-white/75 shadow-lg shadow-black hover:cursor-pointer"
+                  className="absolute top-10 right-0 w-fit h-fit p-3 z-30 rounded-xl bg-white/75 shadow-lg shadow-black hover:cursor-pointer"
                   onClick={Logout}
                 >
                   Signout

@@ -1,14 +1,43 @@
-import { io } from "socket.io-client";
-import { useState, useEffect, useRef } from "react";
+import {default as axios} from 'axios';
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 function NewRoomPage() {
-  const socketRef = useRef();
   const [text, setText] = useState("");
+  const token = localStorage.getItem('token');
+ const RoomAPI = process.env.REACT_APP_API_URL + 'meeting/CreateMeeting';
 
-  const handleSubmit = (e) => {
+
+  const CreateRoomRequest = async ()=>{
+          try {    
+              const response = await axios.post(
+                  RoomAPI,
+                  {},
+                  {
+                      headers: {
+                          Authorization: `Bearer ${token}`,
+                          'Content-Type': 'application/json'
+                      }
+                  }
+              );
+              localStorage.setItem('Room',JSON.stringify(response.data.Room)); 
+          } catch(err) {
+              console.log(err.response?.data || err.message);
+          }
+      };
+
+  const navigate = useNavigate();
+
+  const handleCreateRoom = async () => {
+    const res = await CreateRoomRequest().then(navigate("/Meeting"));
+  };
+
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Xử lý tạo phòng ở đây
+    //
   };
 
   return (
@@ -32,12 +61,11 @@ function NewRoomPage() {
             <p className="font-spartan text-gray-700 text-xl mb-2">Sync smarter. Work better.</p>
             <span className="inline-block bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-sm font-semibold shadow mt-2">Collaboration Platform</span>
           </div>
-          <Link
-            to="#"
-            className="font-bold font-spartan text-white text-lg px-8 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-700 hover:to-indigo-500 transition shadow-lg w-full text-center tracking-wide"
-          >
+          <div
+            className="font-bold font-spartan text-white text-lg px-8 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-700 hover:to-indigo-500 transition shadow-lg w-full text-center tracking-wide hover:cursor-pointer"
+            onClick={handleCreateRoom}>
             + Create Room
-          </Link>
+          </div>
           <form
             onSubmit={handleSubmit}
             className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center w-full border border-indigo-100"
