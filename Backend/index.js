@@ -1,56 +1,39 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const app = express();
-const UserRouter = require('./router/user');
-const MeetingRoomRouter = require('./router/meetingRoom');
-dotenv.config();
-const port = process.env.PORT; 
 const cors = require("cors");
-const {createServer} = require('http');
-const {Server} = require('socket.io');
+const { createServer } = require("http");
 
+const UserRouter = require("./router/user");
+const MeetingRoomRouter = require("./router/meetingRoom");
+const RoomRouter = require('./router/userMeeting');
+const { initSocket } = require("./utils/realtime");
 
+dotenv.config();
+const port = process.env.PORT;
+
+const app = express();
 const server = createServer(app);
-const io = new Server(server,  {
-  cors: {
-    origin: "http://localhost:3000", // địa chỉ frontend
-    methods: ["GET", "POST"]
-  }
-});
 
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  preflightContinue: false,   // tự động trả lời OPTIONS
-  optionsSuccessStatus: 200   // status cho OPTIONS
-}));
-
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use(express.json());
-app.use('/user',UserRouter);
-app.use('/meeting',MeetingRoomRouter);
+app.use("/user", UserRouter);
+app.use("/meeting", MeetingRoomRouter);
+app.use("/Room",RoomRouter);
 
+require("./models/index");
 
-require('./models/index');
-// app.listen(port, ()=>{
-//     console.log(`App is listening on ${port}`);
-// })
+// Khởi tạo socket.io
+initSocket(server);
 
-io.on('connection',(socket) => {
-    console.log('user connected');
-
-    socket.on('Room code',(data)=> {
-      console.log("The room code is: ",data.code)
-    })
-
-
-    socket.on('disconnect', ()=> {
-      console.log('user disconnected');
-    })
-})
-
-
-server.listen(port,()=> {
-  console.log(`Server socket is listening on ${port}`)
-})
+server.listen(port, () => {
+  console.log(`Server + Socket.IO is listening on ${port}`);
+});
