@@ -39,13 +39,13 @@ function HomePage() {
             <span className="font-bold text-indigo-700 text-xl mb-2 tracking-wide">New Meeting</span>
             <span className="text-gray-500 text-base">Tạo phòng họp mới, bắt đầu cuộc trò chuyện ngay!</span>
           </Link>
-          <div className="group relative rounded-2xl shadow-xl bg-white/80 hover:bg-indigo-50 transition flex flex-col items-center justify-center py-12 px-6 cursor-pointer">
+          <Link to="/history" className="group relative rounded-2xl shadow-xl bg-white/80 hover:bg-indigo-50 transition flex flex-col items-center justify-center py-12 px-6 cursor-pointer">
             <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition shadow-lg">
               <img src="History.svg" alt="HistoryIcon" className="w-16 h-16 group-hover:blur-sm transition" />
             </div>
             <span className="font-bold text-indigo-700 text-xl mb-2 tracking-wide">Meeting History</span>
             <span className="text-gray-500 text-base">Xem lại lịch sử các cuộc họp đã tham gia.</span>
-          </div>
+          </Link>
           {/* Sign Out */}
           <div className="group relative rounded-2xl shadow-xl bg-white/80 hover:bg-indigo-50 transition flex flex-col items-center justify-center py-12 px-6 cursor-pointer">
             <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition shadow-lg" onClick={Logout}>

@@ -10,6 +10,7 @@ import RegisterPage from './pages/LoginModule/RegisterPage';
 import NewRoomPage from './pages/MeetingModule/NewRoomPage';
 import MeetingPage from './pages/MeetingModule/MeetingPage';
 import SignUpPage from './pages/LoginModule/SignUpPage';
+import HistoryPage from './pages/MeetingModule/HistoryPage';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/NewMeeting" element={<NewRoomPage/>}></Route>
           <Route path="/Meeting" element={<MeetingPage />}></Route>
           <Route path="/SignUp" element={<SignUpPage/>}></Route>
+          <Route path="/History" element={<HistoryPage/>}></Route>
          </Route>  
       </Routes>
     </BrowserRouter>

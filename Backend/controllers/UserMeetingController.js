@@ -5,7 +5,7 @@ const meetingRoom = require('../models/meetingRoom');
 
 
 const JoinRoom = async (req,res) =>{
-    const {code } = req.body;
+    const { code } = req.body;
     const user = req.user;
     const currentRoom = await meetingRoom.findOne(
         {
@@ -34,4 +34,31 @@ const JoinRoom = async (req,res) =>{
     }
 }
 
-module.exports = {JoinRoom}
+const LeaveRoom = async (req, res) => {
+    const user = req.user;
+    try {
+        const UserInMeeting = await userMeeting.findOne({
+            where: { userID: user.id }
+        });
+
+        if (!UserInMeeting) {
+            return res.status(404).json({ message: 'User not in any meeting' });
+        }
+
+        const currentRoom = await meetingRoom.findOne({
+            where: { RoomID: UserInMeeting.RoomID }
+        });
+        if (!currentRoom) {
+            return res.status(404).json({ message: 'Meeting room not found' });
+        }
+
+        await UserInMeeting.destroy();
+        return res.status(200).json({ message: 'Left room successfully' });
+
+    } catch (e) {
+        console.error("Error leaving room:", e);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = {JoinRoom, LeaveRoom}

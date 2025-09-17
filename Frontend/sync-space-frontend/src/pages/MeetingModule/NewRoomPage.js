@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 function NewRoomPage() {
   const [text, setText] = useState("");
+  const [err, setErr] = useState(false); 
   const token = localStorage.getItem('token');
- const RoomAPI = process.env.REACT_APP_API_URL + 'meeting/CreateMeeting';
+  const RoomAPI = process.env.REACT_APP_API_URL + 'meeting/CreateMeeting';
   
 
   const CreateRoomRequest = async ()=>{
@@ -22,22 +23,31 @@ function NewRoomPage() {
                   }
               );
               localStorage.setItem('Room',JSON.stringify(response.data.Room)); 
+              return { success: true, data: response.data };
           } catch(err) {
               console.log(err.response?.data || err.message);
+              return { success: false, error: err.response?.status || err.message };
           }
       };
 
   const navigate = useNavigate();
 
   const handleCreateRoom = async () => {
-    const res = await CreateRoomRequest().then(navigate("/Meeting"));
-  };
+    const result = await CreateRoomRequest();
+    if (result.success) {
+        navigate("/Meeting");
+    } else if (result.error === 404) {
+        setErr(true);
+    } else {
+        alert("Có lỗi xảy ra, thử lại sau.");
+    }
+};
 
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //
+    
   };
 
   return (
@@ -61,11 +71,16 @@ function NewRoomPage() {
             <p className="font-spartan text-gray-700 text-xl mb-2">Sync smarter. Work better.</p>
             <span className="inline-block bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-sm font-semibold shadow mt-2">Collaboration Platform</span>
           </div>
-          <div
+          {err == false && (<div
             className="font-bold font-spartan text-white text-lg px-8 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-700 hover:to-indigo-500 transition shadow-lg w-full text-center tracking-wide hover:cursor-pointer"
             onClick={handleCreateRoom}>
             + Create Room
-          </div>
+          </div>)} 
+          {err == true && (
+            <div className="w-full p-4 bg-red-100 text-red-700 border border-red-300 rounded-xl font-spartan shadow text-center">
+              Room already exists or not found. Please try another code.
+            </div>
+          )}
           <form
             onSubmit={handleSubmit}
             className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center w-full border border-indigo-100"

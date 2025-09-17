@@ -12,7 +12,7 @@ const CreateRoom = async (req, res) => {
       },
     });
     if (existingRoom) {
-      return res.status(400).json({
+      return res.status(404).json({
         message: "You need to end the current meeting first",
       });
     }
@@ -52,4 +52,24 @@ const EndRoom = async (req, res) => {
   }
 };
 
-module.exports = { CreateRoom, EndRoom };
+const FindAllRoom = async (req,res) => {
+  const user = req.user;
+
+    try{
+      const allRooms = await meetingRoom.findAll({
+        where: {
+          creatorID: user.id,
+        }
+      })
+      return res.status(200).json({
+        allRooms, 
+        message: 'Success'
+      })
+    } catch(e) {
+      return res.status(404).json({
+        message: 'err' + e
+      })
+    }
+}
+
+module.exports = { CreateRoom, EndRoom, FindAllRoom };
