@@ -4,9 +4,8 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { default as axios } from "axios";
 
-
 const EndRoomAPI = process.env.REACT_APP_API_URL + "meeting/EndRoom";
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
 function MeetingPage() {
   const socketRef = useRef();
@@ -16,18 +15,20 @@ function MeetingPage() {
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
   useEffect(() => {
-    socketRef.current = io("http://localhost:8080", {
-      auth: { token: localStorage.getItem("token") },
-    });
+  socketRef.current = io("http://localhost:8080", {
+    auth: { token: localStorage.getItem("token") },
+  });
 
-    socketRef.current.on("message", (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
+  socketRef.current.emit("JoinRoom", { code: code.roomCode }); // join ngay khi vào
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, []);
+  socketRef.current.on("roomMessage", (msg) => {
+    setMessages((prev) => [...prev, msg]);
+  });
+
+  return () => {
+    socketRef.current.disconnect();
+  };
+}, []);
 
   useEffect(() => {
     if (isLoggedIn == false) {
@@ -37,25 +38,38 @@ function MeetingPage() {
     }
   }, [isLoggedIn]);
 
-  function sendMessage(event) {
-    event.preventDefault();
-    if (!message.trim()) return;
-    socketRef.current.emit("message", message);
-    setMessages((prev) => [...prev, message]); // hiển thị luôn tin nhắn mình gửi
-    setMessage("");
-    console.log(user.username);
-  }
+  const code = JSON.parse(localStorage.getItem("Room"));
 
-  const code = JSON.parse(localStorage.getItem('Room'));
+ function sendMessage(event) {
+  event.preventDefault();
+  if (!message.trim()) return;
+
+  const newMsg = {
+    sender: socketRef.current.id,
+    message,
+  };
+
+  socketRef.current.emit("SendMessage", { code: code.roomCode, message }); // 👈 dùng event riêng
+  setMessages((prev) => [...prev, newMsg]);
+  setMessage("");
+}
+ 
+
 
   const handleEnd = async () => {
-    await axios.post(EndRoomAPI,{}, {
-        headers: {
+    await axios
+      .post(
+        EndRoomAPI,
+        {},
+        {
+          headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+          },
         }
-    }).then(navigate('/'));
-  }
+      )
+      .then(navigate("/"));
+  };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-indigo-400 via-slate-100 to-indigo-400">
@@ -72,7 +86,10 @@ function MeetingPage() {
               <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow">
                 📹 Video
               </button>
-              <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow" onClick={handleEnd}>
+              <button
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow"
+                onClick={handleEnd}
+              >
                 ❌ Leave
               </button>
             </div>
@@ -83,13 +100,11 @@ function MeetingPage() {
                 <div
                   key={idx}
                   className={`max-w-[80%] px-3 py-2 rounded-2xl shadow 
-                ${
-                  idx % 2 === 0
-                    ? "bg-indigo-200 self-start"
-                    : "bg-green-200 self-end"
-                }`}
-                >
-                  {user.username}:{msg}
+                  ${idx % 2 === 0 ? "bg-indigo-200 self-start" : "bg-green-200 self-end"}`}>
+                  {msg.sender === socketRef.current.id
+                    ? user.username
+                    : msg.sender}
+                  : {msg.message}
                 </div>
               ))}
             </div>
@@ -111,7 +126,10 @@ function MeetingPage() {
                 Send
               </button>
             </form>
-            <div className="bg-white shadow-xl rounded-l-2xl overflow-hidden p-4 z-20"> ROOMCODE: {code.roomCode}</div>
+            <div className="bg-white shadow-xl rounded-l-2xl overflow-hidden p-4 z-20">
+              {" "}
+              ROOMCODE: {code.roomCode}
+            </div>
           </div>
         </div>
       )}

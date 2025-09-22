@@ -1,25 +1,24 @@
 const { Server } = require("socket.io");
+const RoomHandler = require("./RoomHandler");
 
-let io; 
+let io;
 
 function initSocket(server) {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000", // frontend
-      methods: ["GET", "POST", "PUT", "DELETE"]
-    }
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    },
   });
 
   io.on("connection", (socket) => {
-    console.log("User connected");
+    console.log("User connected:", socket.id);
 
-    socket.on("sendMessage", (data) => {
-      console.log("Message received:", data);
-      io.emit("message", data); 
-    });
+    // Đăng ký tất cả các handler từ file khác
+    RoomHandler(io, socket);
 
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+      console.log("User disconnected:", socket.id);
     });
   });
 
@@ -27,9 +26,7 @@ function initSocket(server) {
 }
 
 function getIO() {
-  if (!io) {
-    throw new Error("Socket.io has not been initialized!");
-  }
+  if (!io) throw new Error("Socket.io has not been initialized!");
   return io;
 }
 

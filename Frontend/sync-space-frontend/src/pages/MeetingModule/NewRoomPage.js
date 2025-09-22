@@ -1,7 +1,7 @@
 import { default as axios } from "axios";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+
 
 function NewRoomPage() {
   const [text, setText] = useState("");
@@ -9,6 +9,8 @@ function NewRoomPage() {
   const token = localStorage.getItem("token");
   const RoomAPI = process.env.REACT_APP_API_URL + "meeting/CreateMeeting";
   const JoinRoomAPI = process.env.REACT_APP_API_URL + "Room/Join";
+
+
 
   const CreateRoomRequest = async () => {
     try {
@@ -46,7 +48,6 @@ function NewRoomPage() {
   const handleSubmit = async (e) => {
   e.preventDefault();           // ngăn reload page
   if (!text.trim()) return;     // check empty input
-
   try {
     const response = await axios.post(
       JoinRoomAPI,
@@ -62,7 +63,7 @@ function NewRoomPage() {
     navigate("/Meeting");
   } catch (err) {
     // Hiển thị lỗi nếu join thất bại
-    setErr(err.response?.data?.message || "Failed to join room");//Chinh cai nay!!!!!!!!!
+    setErr(err.response?.data?.message || "Failed to join room");
   }
 };
 
