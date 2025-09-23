@@ -3,7 +3,8 @@ import { createContext, useEffect, useState } from "react";
 export const AuthContext = createContext();
 
 export function AuthProvider({children}){
-    const [isLoggedIn, setLoggedIn ] = useState(false);
+    const [isLoggedIn, setLoggedIn ] = useState(false); 
+    const  [avatarURL,setAvatarUrl] = useState('');
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -12,9 +13,12 @@ export function AuthProvider({children}){
     }, []);
 
      // Hàm login
-  const login = () => {
+  const login = (avatar) => {
     setLoggedIn(true);
+    setAvatarUrl(avatar);
   };
+
+  console.log("AuthProvider render, avatarURL:", avatarURL);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -24,7 +28,7 @@ export function AuthProvider({children}){
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, avatarURL}}>
       {children}
     </AuthContext.Provider>
   );

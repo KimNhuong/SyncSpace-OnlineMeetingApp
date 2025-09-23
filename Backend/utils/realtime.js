@@ -9,11 +9,14 @@ function initSocket(server) {
       origin: "http://localhost:3000",
       methods: ["GET", "POST", "PUT", "DELETE"],
     },
+    connectionStateRecovery: {
+    maxDisconnectionDuration: 10 * 60 * 1000,
+    skipMiddlewares: true,
+  }
   });
 
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
-
     // Đăng ký tất cả các handler từ file khác
     RoomHandler(io, socket);
 

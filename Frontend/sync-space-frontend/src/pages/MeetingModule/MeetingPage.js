@@ -14,13 +14,25 @@ function MeetingPage() {
   const user = JSON.parse(localStorage.getItem("user"));
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+  
+  
   useEffect(() => {
   socketRef.current = io("http://localhost:8080", {
     auth: { token: localStorage.getItem("token") },
   });
 
+
   socketRef.current.emit("JoinRoom", { code: code.roomCode }); // join ngay khi vào
 
+  // clear listener trước khi thêm
+  socketRef.current.off("roomMessage");
   socketRef.current.on("roomMessage", (msg) => {
     setMessages((prev) => [...prev, msg]);
   });
@@ -44,13 +56,7 @@ function MeetingPage() {
   event.preventDefault();
   if (!message.trim()) return;
 
-  const newMsg = {
-    sender: socketRef.current.id,
-    message,
-  };
-
-  socketRef.current.emit("SendMessage", { code: code.roomCode, message }); // 👈 dùng event riêng
-  setMessages((prev) => [...prev, newMsg]);
+  socketRef.current.emit("SendMessage", { code: code.roomCode, message, sender: user.username  }); // 👈 dùng event riêng
   setMessage("");
 }
  
@@ -95,18 +101,17 @@ function MeetingPage() {
             </div>
           </div>
           <div className="w-1/4 h-full flex flex-col bg-white shadow-xl rounded-l-2xl overflow-hidden mt-40">
-            <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+            <div className="flex-1 p-4 space-y-2 overflow-y-auto  max-h-[50vh]">
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`max-w-[80%] px-3 py-2 rounded-2xl shadow 
+                  className={`max-w-[80%] px-3 py-2 rounded-2xl shadow break-words whitespace-pre-wrap
                   ${idx % 2 === 0 ? "bg-indigo-200 self-start" : "bg-green-200 self-end"}`}>
-                  {msg.sender === socketRef.current.id
-                    ? user.username
-                    : msg.sender}
+                  {msg.sender}
                   : {msg.message}
                 </div>
               ))}
+            <div ref={messagesEndRef} />
             </div>
             <form
               onSubmit={sendMessage}

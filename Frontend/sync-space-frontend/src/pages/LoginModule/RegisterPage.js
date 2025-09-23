@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 import { LoginRequest, DecodeToken } from "../../Services/ValidationService"
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {AuthContext} from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 
 function RegisterPage() {
 
-  const {login} = useContext(AuthContext);
+  const {login, setAvatarUrl} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
@@ -32,7 +32,7 @@ function RegisterPage() {
         localStorage.setItem("user", JSON.stringify(decoded));
         localStorage.setItem("token",token);
         setError(0);
-        login();
+        login(res.avatar);
         navigate("/");   
       }
     } catch (e) {

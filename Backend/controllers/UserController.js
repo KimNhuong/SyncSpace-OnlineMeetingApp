@@ -42,6 +42,7 @@ const Login = async (req,res) => {
                 return res.status(201).json({
                 message: 'login succesfully',
                 accessToken: token,
+                avatar: foundUser.avatarUrl, 
                     }
                 )
 

@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 
 
 export default function Navbar() {
-  const {isLoggedIn, logout} = useContext(AuthContext);
+  const {isLoggedIn, logout, avatarURL} = useContext(AuthContext);
   const [hover, setHover] = useState(0);
   const navigate = useNavigate();
 
@@ -96,9 +96,12 @@ export default function Navbar() {
               {hover === 1 && (
                 <div
                   className="absolute top-10 right-0 w-fit h-fit p-3 z-30 rounded-xl bg-white/75 shadow-lg shadow-black hover:cursor-pointer"
-                  onClick={Logout}
                 >
-                  Signout
+                  <img src={avatarURL} alt='user avatar'></img>
+                  <br></br>
+                  <p className="hover:drop-shadow-[0_0_10px_#38bdf8] hover:underline ">Profile</p>
+                  <br className="border-2 border-black"></br>
+                  <p className="hover:drop-shadow-[0_0_10px_#38bdf8] hover:underline "  onClick={Logout}>Signout </p>
                 </div>
               )}
             </div>

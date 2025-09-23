@@ -3,15 +3,26 @@ function RoomHandler(io, socket) {
   socket.on("JoinRoom", ({ code }) => {
     socket.join(code);
     console.log(`User ${socket.id} joined room ${code}`);
+
+    if (socket.recoverd){
+
+    } else {
+      
+    }
+
+
   });
 
   // khi gửi message
-  socket.on("SendMessage", ({ code, message }) => {
+  socket.on("SendMessage", ({ code, message, sender }) => {
     io.to(code).emit("roomMessage", {
-      sender: socket.id,
+      sender: sender,
       message,
     });
   });
+
+
+
 }
 
 module.exports = RoomHandler;
