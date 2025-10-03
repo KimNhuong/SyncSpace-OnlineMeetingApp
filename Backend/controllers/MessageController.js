@@ -26,5 +26,30 @@ const initMessageSocket = () => {
     
 };
 
-module.exports = { saveMsg };
+const getAllRoomMsg = async (req,res) => {
+    const roomID = req.body;
+    const user = req.user;
+    try {
+        const JoinedRoom  = await userMeeting.findAll({
+            where:{
+                RoomID: roomID,
+                userID: user.id,
+            }
+        }).then(
+        reponse = await Message.findAll({
+                where: {
+                    roomID: JoinedRoom.RoomID, 
+                }
+             })
+        )
+        return res.status(201).json({
+            message: 'Success',
+            reponse,
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+module.exports = { saveMsg, getAllRoomMsg };
 

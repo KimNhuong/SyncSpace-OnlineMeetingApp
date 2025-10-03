@@ -1,28 +1,35 @@
 function RoomHandler(io, socket) {
-  // khi join room
+  let currentRoom = null;
+
+  // Khi join room
   socket.on("JoinRoom", ({ code }) => {
     socket.join(code);
+    currentRoom = code;
     console.log(`User ${socket.id} joined room ${code}`);
 
-    if (socket.recoverd){
-
-    } else {
-      
-    }
-
-
+    // Thông báo cho tất cả người khác trong room rằng có người mới kết nối
+    socket.to(code).emit("user-connected", socket.id);
   });
 
-  // khi gửi message
+  // Khi gửi message
   socket.on("SendMessage", ({ code, message, sender }) => {
     io.to(code).emit("roomMessage", {
-      sender: sender,
+      sender,
       message,
     });
   });
 
+  // Khi nhận tín hiệu WebRTC từ frontend
+  socket.on("signal", ({ to, signal }) => {
+    io.to(to).emit("signal", { from: socket.id, signal });
+  });
 
-
+  // Khi người dùng rời room hoặc disconnect
+  socket.on("disconnect", () => {
+    if (currentRoom) {
+      socket.to(currentRoom).emit("user-disconnected", socket.id);
+    }
+  });
 }
 
 module.exports = RoomHandler;

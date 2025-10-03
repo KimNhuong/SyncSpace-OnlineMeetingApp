@@ -6,6 +6,7 @@ const { createServer } = require("http");
 const UserRouter = require("./router/user");
 const MeetingRoomRouter = require("./router/meetingRoom");
 const RoomRouter = require('./router/userMeeting');
+const MessageRouter = require('./router/message');
 const { initSocket } = require("./utils/realtime");
 
 dotenv.config();
@@ -28,6 +29,8 @@ app.use(express.json());
 app.use("/user", UserRouter);
 app.use("/meeting", MeetingRoomRouter);
 app.use("/Room",RoomRouter);
+app.use("/Message",MessageRouter); 
+
 
 require("./models/index");
 

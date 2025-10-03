@@ -46,12 +46,12 @@ export default function Navbar() {
               <div className="hidden md:flex space-x-3">
                 <Link to="/NewRoom">
                   <button className="px-4 py-1 rounded-md text-sm bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-[0_0_20px_5px_rgba(99,102,241,0.7)]">
-                    New Room
+                    Sign In
                   </button>
                 </Link>
-                <Link to="/SignIn">
+                <Link to="/SignUp">
                   <button className="px-4 py-1 rounded-md text-sm border border-gray-200 hover:bg-gray-50 hover:shadow-[0_0_20px_5px_rgba(99,102,241,0.7)]">
-                    Sign in
+                    Sign Up
                   </button>
                 </Link>
               </div>
