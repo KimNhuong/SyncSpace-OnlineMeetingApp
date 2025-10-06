@@ -1,15 +1,14 @@
 import { useContext, useEffect, useRef, useState, createRef  } from "react";
-import { io } from "socket.io-client";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { default as axios } from "axios";
-import SimplePeer from "simple-peer";
+import axios from "axios";
+import RealtimeService from "../../Services/realtime";
 
 const EndRoomAPI = (process.env.REACT_APP_API_URL || "http://localhost:8080/") + "meeting/EndRoom";
 const token = localStorage.getItem("token");
 
 function MeetingPage() {
-  const socketRef = useRef();
+  const realtimeRef = useRef();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -65,47 +64,61 @@ function MeetingPage() {
   console.log("API URL:", process.env.REACT_APP_API_URL || "http://localhost:8080/");
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:8080", {
-      auth: { token: localStorage.getItem("token") },
-    });
-    socketRef.current.emit("JoinRoom", { code: code.roomCode });
+    const serverUrl = process.env.REACT_APP_API_URL || "http://localhost:8080";
+    const token = localStorage.getItem("token");
+    realtimeRef.current = new RealtimeService(serverUrl, token);
+    realtimeRef.current.joinRoom(code.roomCode);
 
-    // Thử lấy camera, nếu không được thì vẫn tạo peer connection
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        console.log("✅ Camera access granted");
         setHasCamera(true);
         setLocalStream(stream);
         videoRef.current.srcObject = stream;
-        setupPeerConnections(stream);
+        setupRealtimeHandlers(stream);
       })
-      .catch((error) => {
-        console.log("❌ Camera access denied, but still joining room");
+      .catch(() => {
         setHasCamera(false);
         setLocalStream(null);
-        // Tạo một stream rỗng để peer connection vẫn hoạt động
         const emptyStream = new MediaStream();
-        setupPeerConnections(emptyStream);
+        setupRealtimeHandlers(emptyStream);
       });
 
-    // Tách logic setup peer connections ra function riêng
-    function setupPeerConnections(stream) {
+    function setupRealtimeHandlers(stream) {
       // Khi có người mới kết nối
-      socketRef.current.on("user-connected", (userId) => {
-        console.log("👤 User connected:", userId);
+      realtimeRef.current.onUserConnected((userId) => {
         const newVideoRef = createRef();
-        const peer = createPeer(userId, stream, newVideoRef);
+        const peer = realtimeRef.current.createPeer(
+          userId,
+          stream,
+          (to, signal) => realtimeRef.current.sendSignal(to, signal),
+          (remoteStream) => {
+            if (newVideoRef.current && remoteStream) {
+              newVideoRef.current.srcObject = remoteStream;
+            }
+          },
+          (err) => console.error("Peer error:", err)
+        );
         peers.current[userId] = { peer, videoRef: newVideoRef };
         addVideoElement(newVideoRef);
       });
 
       // Khi nhận tín hiệu từ người khác
-      socketRef.current.on("signal", ({ from, signal }) => {
-        console.log("📡 Received signal from:", from);
+      realtimeRef.current.onSignal(({ from, signal }) => {
         if (!peers.current[from]) {
           const newVideoRef = createRef();
-          const peer = addPeer(signal, from, stream, newVideoRef);
+          const peer = realtimeRef.current.addPeer(
+            signal,
+            from,
+            stream,
+            (to, signal) => realtimeRef.current.sendSignal(to, signal),
+            (remoteStream) => {
+              if (newVideoRef.current && remoteStream) {
+                newVideoRef.current.srcObject = remoteStream;
+              }
+            },
+            (err) => console.error("Peer error:", err)
+          );
           peers.current[from] = { peer, videoRef: newVideoRef };
           addVideoElement(newVideoRef);
         } else {
@@ -114,104 +127,35 @@ function MeetingPage() {
       });
 
       // Khi có người rời room
-      socketRef.current.on("user-disconnected", (userId) => {
-        console.log("👋 User disconnected:", userId);
+      realtimeRef.current.onUserDisconnected((userId) => {
         if (peers.current[userId]) {
           const videoRef = peers.current[userId].videoRef;
           peers.current[userId].peer.destroy();
           delete peers.current[userId];
-          
           if (videoRef.current && videoRef.current.parentNode) {
             videoRef.current.parentNode.removeChild(videoRef.current);
           }
-          
-          setRemoteVideos(prev => prev.filter(ref => ref !== videoRef));
+          setRemoteVideos((prev) => prev.filter((ref) => ref !== videoRef));
         }
+      });
+
+      // Nhận message
+      realtimeRef.current.onRoomMessage((msg) => {
+        setMessages((prev) => [...prev, msg]);
       });
     }
 
-    socketRef.current.off("roomMessage");
-    socketRef.current.on("roomMessage", (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
     return () => {
-      // Ngắt camera khi component unmount
       stopCamera();
-      
-      // Ngắt tất cả peer connections
-      Object.values(peers.current).forEach(({peer}) => {
+      Object.values(peers.current).forEach(({ peer }) => {
         peer.destroy();
       });
-      
-      socketRef.current.disconnect();
+      realtimeRef.current.disconnect();
     };
   }, []);
 
   // Hàm tạo peer mới (initiator)
-  function createPeer(userId, stream, videoRef) {
-    console.log("🔗 Creating peer for user:", userId);
-    const peer = new SimplePeer({
-      initiator: true,
-      trickle: false,
-      stream: stream || undefined,
-    });
 
-    peer.on("signal", (signal) => {
-      console.log("📤 Sending signal to:", userId);
-      socketRef.current.emit("signal", { to: userId, signal });
-    });
-
-    peer.on("stream", (remoteStream) => {
-      console.log("📹 Received remote stream in createPeer:", remoteStream);
-      console.log("📹 Video tracks:", remoteStream.getVideoTracks().length);
-      console.log("📹 Audio tracks:", remoteStream.getAudioTracks().length);
-      
-      if (videoRef.current && remoteStream) {
-        videoRef.current.srcObject = remoteStream;
-        console.log("✅ Video element updated with remote stream in createPeer");
-      }
-    });
-
-    peer.on("error", (err) => {
-      console.error("❌ Peer error in createPeer:", err);
-    });
-
-    return peer;
-  }
-
-  // Hàm thêm peer (receiver)
-  function addPeer(incomingSignal, userId, stream, videoRef) {
-    console.log("🔗 Adding peer for user:", userId);
-    const peer = new SimplePeer({
-      initiator: false,
-      trickle: false,
-      stream: stream || undefined,
-    });
-
-    peer.on("signal", (signal) => {
-      console.log("📤 Sending signal to:", userId);
-      socketRef.current.emit("signal", { to: userId, signal });
-    });
-
-    peer.on("stream", (remoteStream) => {
-      console.log("📹 Received remote stream in addPeer:", remoteStream);
-      console.log("📹 Video tracks:", remoteStream.getVideoTracks().length);
-      console.log("📹 Audio tracks:", remoteStream.getAudioTracks().length);
-      
-      if (videoRef.current && remoteStream) {
-        videoRef.current.srcObject = remoteStream;
-        console.log("✅ Video element updated with remote stream in addPeer");
-      }
-    });
-
-    peer.on("error", (err) => {
-      console.error("❌ Peer error in addPeer:", err);
-    });
-
-    peer.signal(incomingSignal);
-    return peer;
-  }
 
   // Hàm thêm video element
   function addVideoElement(videoRef) {
@@ -253,12 +197,7 @@ function MeetingPage() {
   function sendMessage(event) {
     event.preventDefault();
     if (!message.trim()) return;
-
-    socketRef.current.emit("SendMessage", {
-      code: code.roomCode,
-      message,
-      sender: user.username,
-    });
+    realtimeRef.current.sendMessage(code.roomCode, message, user.username);
     setMessage("");
   }
 
