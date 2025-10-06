@@ -1,7 +1,7 @@
+
 import { io } from "socket.io-client";
 import SimplePeer from "simple-peer";
 
-// Khởi tạo socket và các hàm realtime chung
 class RealtimeService {
   constructor(serverUrl, token) {
     this.socket = io(serverUrl, {
@@ -40,6 +40,15 @@ class RealtimeService {
 
   disconnect() {
     this.socket.disconnect();
+  }
+
+    // Whiteboard (canvas) events
+  emitDraw(data, roomCode) {
+    this.socket.emit("draw", { data, code: roomCode });
+  }
+
+  onDraw(callback) {
+    this.socket.on("draw", callback);
   }
 
   // Peer logic có thể tách riêng nếu muốn
